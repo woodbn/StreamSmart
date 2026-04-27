@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Sparkles, Mic, Plus, Clock, Users, Search } from 'lucide-react';
+import { Send, Sparkles, Mic, Plus, Clock, Users, Search, X } from 'lucide-react';
 
 interface Message {
   id: number;
@@ -234,7 +234,14 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
           <h3 className="font-semibold">AI Movie Assistant</h3>
           <p className="text-xs text-white/80">Always here to help you discover</p>
         </div>
-      </div>
+        <button
+    onClick={onClose}
+    className="p-2 rounded-full hover:bg-white/20 transition"
+    aria-label="Close AI chat"
+  >
+    <X className="w-5 h-5" />
+  </button>
+</div>
 
       {/* Quick Access Features */}
       <div className="bg-zinc-800/50 p-3 border-b border-zinc-800">
