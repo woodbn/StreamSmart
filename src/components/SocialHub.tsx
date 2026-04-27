@@ -9,7 +9,7 @@
 */
 
 import { useState } from 'react';
-import { X, Users, Heart, MessageCircle, Share2, Play, Clock, TrendingUp, Award, Zap, Eye, UserPlus, Settings } from 'lucide-react';
+import { X, Users, Heart, MessageCircle, Share2, Play, Clock, TrendingUp, Award, Zap, Eye, UserPlus, Settings, ChevronDown, Send } from 'lucide-react';
 
 interface SocialHubProps {
   isOpen: boolean;
@@ -131,6 +131,17 @@ const mockWatchParties: WatchParty[] = [
   }
 ];
 
+const mockFollowers: Activity['user'][] = [
+  { name: 'Sarah Chen', avatar: mockActivities[0].user.avatar, isFollowing: true },
+  { name: 'Mike Johnson', avatar: mockActivities[1].user.avatar, isFollowing: true },
+  { name: 'Emma Wilson', avatar: mockActivities[2].user.avatar, isFollowing: false }
+];
+
+const mockFollowing: Activity['user'][] = [
+  { name: 'Alex Rivera', avatar: mockWatchParties[0].hostAvatar, isFollowing: true },
+  { name: 'Jamie Lee', avatar: mockWatchParties[1].hostAvatar, isFollowing: true }
+];
+
 /*
   SocialHub component (main)
 
@@ -142,6 +153,14 @@ const mockWatchParties: WatchParty[] = [
 export function SocialHub({ isOpen, onClose }: SocialHubProps) {
   const [activeTab, setActiveTab] = useState<'feed' | 'profile' | 'friends'>('feed');
   const [activities, setActivities] = useState(mockActivities);
+  const [commentsByActivity, setCommentsByActivity] = useState<Record<number, {user: string; text: string}[]>>(Object.fromEntries(mockActivities.map(a => [a.id, []])));
+  const [followers] = useState<Activity['user'][]>(mockFollowers);
+  const [following] = useState<Activity['user'][]>(mockFollowing);
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [selectedDM, setSelectedDM] = useState<Activity['user'] | null>(null);
+  const [messages, setMessages] = useState<Record<string, { from: string; text: string }[]>>({});
+  const [messageText, setMessageText] = useState('');
 
   const handleLike = (id: number) => {
     setActivities(activities.map(activity => 
@@ -157,6 +176,23 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
         ? { ...activity, user: { ...activity.user, isFollowing: !activity.user.isFollowing } }
         : activity
     ));
+  };
+
+  const handleSubmitComment = (id: number, text: string) => {
+    if (!text.trim()) return;
+    const next = { ...(commentsByActivity || {}) } as Record<number, {user:string; text:string}[]>;
+    next[id] = [...(next[id] || []), { user: 'You', text: text.trim() }];
+    setCommentsByActivity(next);
+    setActivities(activities.map(a => a.id === id ? { ...a, comments: a.comments + 1 } : a));
+  };
+
+  const sendMessage = (to: Activity['user']) => {
+    if (!messageText.trim()) return;
+    const key = to.name;
+    const thread = messages[key] || [];
+    const newMsg = { from: 'You', text: messageText.trim() };
+    setMessages({ ...messages, [key]: [...thread, newMsg] });
+    setMessageText('');
   };
 
   if (!isOpen) return null;
@@ -255,6 +291,8 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                   activity={activity} 
                   onLike={handleLike}
                   onFollow={handleFollow}
+                  comments={commentsByActivity[activity.id] || []}
+                  onSubmitComment={handleSubmitComment}
                 />
               ))}
             </div>
@@ -275,15 +313,53 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                     <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition font-semibold">Edit Profile</button>
                     <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition">Settings</button>
                   </div>
+                      <div className="mt-4 flex items-center gap-4">
+                        <button onClick={() => setShowFollowers(!showFollowers)} className="flex items-center gap-3 bg-zinc-800 border border-zinc-700 px-3 py-2 rounded-lg">
+                          <div>
+                            <div className="text-lg font-bold">{followers.length}</div>
+                            <div className="text-xs text-gray-400">Followers</div>
+                          </div>
+                          <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${showFollowers ? 'rotate-180' : ''}`} />
+                        </button>
+                        <button onClick={() => setShowFollowing(!showFollowing)} className="flex items-center gap-3 bg-zinc-800 border border-zinc-700 px-3 py-2 rounded-lg">
+                          <div>
+                            <div className="text-lg font-bold">{following.length}</div>
+                            <div className="text-xs text-gray-400">Following</div>
+                          </div>
+                          <ChevronDown className={`w-4 h-4 ml-2 transition-transform ${showFollowing ? 'rotate-180' : ''}`} />
+                        </button>
+                      </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-4">
+                  {showFollowers && (
+                    <div className="mt-4 bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+                      <h4 className="font-bold mb-3">Followers</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {followers.map((u) => (
+                          <FriendCard key={u.name} user={u} onFollow={() => {}} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {showFollowing && (
+                    <div className="mt-4 bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+                      <h4 className="font-bold mb-3">Following</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {following.map((u) => (
+                          <FriendCard key={u.name} user={u} onFollow={() => {}} />
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 gap-4">
                 <div className="bg-zinc-800 rounded-lg p-4 border border-zinc-700">
                   <h4 className="font-bold mb-2">Recent Activity</h4>
                   <div className="space-y-3">
                     {activities.slice(0, 3).map(a => (
-                      <ActivityCard key={a.id} activity={a} onLike={handleLike} onFollow={handleFollow} />
+                      <ActivityCard key={a.id} activity={a} onLike={handleLike} onFollow={handleFollow} comments={commentsByActivity[a.id] || []} onSubmitComment={handleSubmitComment} />
                     ))}
                   </div>
                 </div>
@@ -292,23 +368,57 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
           )}
 
           {activeTab === 'friends' && (
-            <div className="p-6 space-y-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Your Friends (248)</h3>
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2">
-                  <UserPlus className="w-4 h-4" />
-                  Find Friends
-                </button>
-              </div>
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {/* Contacts list */}
+                <div className="md:col-span-1 bg-zinc-800 rounded-lg p-4 border border-zinc-700">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold">Messages</h3>
+                    <button className="text-sm text-gray-400">New</button>
+                  </div>
+                  <div className="space-y-2 overflow-y-auto max-h-[60vh]">
+                    {Array.from(new Map([...followers, ...following].map(u => [u.name, u])).values()).map((u) => (
+                      <div key={u.name} onClick={() => setSelectedDM(u)} className={`flex items-center gap-3 p-2 rounded-md hover:bg-zinc-700 cursor-pointer ${selectedDM?.name === u.name ? 'bg-zinc-700' : ''}`}>
+                        <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full object-cover" />
+                        <div className="flex-1">
+                          <div className="font-semibold">{u.name}</div>
+                          <div className="text-xs text-gray-400">{u.isFollowing ? 'Following' : 'Not following'}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mockActivities.map(activity => (
-                  <FriendCard 
-                    key={activity.id} 
-                    user={activity.user}
-                    onFollow={() => handleFollow(activity.id)}
-                  />
-                ))}
+                {/* Message pane */}
+                <div className="md:col-span-2 bg-zinc-800 rounded-lg p-4 border border-zinc-700 flex flex-col">
+                  {selectedDM ? (
+                    <>
+                      <div className="flex items-center gap-3 mb-4">
+                        <img src={selectedDM.avatar} alt={selectedDM.name} className="w-12 h-12 rounded-full object-cover" />
+                        <div>
+                          <div className="font-bold">{selectedDM.name}</div>
+                          <div className="text-xs text-gray-400">Direct Message</div>
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-y-auto space-y-3 mb-4">
+                        {(messages[selectedDM.name] || []).map((m, i) => (
+                          <div key={i} className={`p-3 rounded-md ${m.from === 'You' ? 'bg-blue-600 text-white self-end' : 'bg-zinc-700 text-gray-200'}`}>
+                            <div className="text-sm">{m.text}</div>
+                            <div className="text-xs text-gray-400 mt-1">{m.from}</div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input value={messageText} onChange={(e) => setMessageText(e.target.value)} placeholder={`Message ${selectedDM.name}`} className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none" />
+                        <button onClick={() => sendMessage(selectedDM)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                          <Send className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center text-gray-400">Select a contact to start messaging</div>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -326,7 +436,16 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
   - Calls `onLike` and `onFollow` passed from the parent to update state.
 */
 
-function ActivityCard({ activity, onLike, onFollow }: { activity: Activity; onLike: (id: number) => void; onFollow: (id: number) => void }) {
+function ActivityCard({ activity, onLike, onFollow, comments, onSubmitComment }: { activity: Activity; onLike: (id: number) => void; onFollow: (id: number) => void; comments?: {user:string; text:string}[]; onSubmitComment?: (id:number, text:string) => void }) {
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState('');
+  const submit = () => {
+    if (!onSubmitComment) return;
+    onSubmitComment(activity.id, commentText);
+    setCommentText('');
+    setShowComments(true);
+  };
+
   return (
     <div className="bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700">
       <div className="p-5">
@@ -398,7 +517,7 @@ function ActivityCard({ activity, onLike, onFollow }: { activity: Activity; onLi
             <Heart className={activity.isLiked ? 'fill-red-500' : ''} />
             <span className="text-sm font-semibold">{activity.likes}</span>
           </button>
-          <button className="flex items-center gap-2 text-gray-400 hover:text-white transition">
+          <button onClick={() => setShowComments(!showComments)} className="flex items-center gap-2 text-gray-400 hover:text-white transition">
             <MessageCircle className="w-5 h-5" />
             <span className="text-sm font-semibold">{activity.comments}</span>
           </button>
@@ -407,6 +526,22 @@ function ActivityCard({ activity, onLike, onFollow }: { activity: Activity; onLi
             <span className="text-sm font-semibold">Share</span>
           </button>
         </div>
+        {showComments && (
+          <div className="mt-4 border-t border-zinc-700 pt-4">
+            <div className="space-y-3 mb-3">
+              {(comments || []).map((c, i) => (
+                <div key={i} className="text-sm bg-zinc-900 p-2 rounded">
+                  <div className="font-semibold text-xs text-gray-300">{c.user}</div>
+                  <div className="text-gray-200">{c.text}</div>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <input value={commentText} onChange={(e) => setCommentText(e.target.value)} placeholder="Write a comment..." className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none" />
+              <button onClick={submit} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Comment</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
