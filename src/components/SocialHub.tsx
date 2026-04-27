@@ -174,8 +174,22 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
   const [showFollowing, setShowFollowing] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [selectedDM, setSelectedDM] = useState<Activity['user'] | null>(null);
-  const [messages, setMessages] = useState<Record<string, { from: string; text: string }[]>>({});
+  const [messages, setMessages] = useState<Record<string, { from: string; text: string; unread?: boolean }[]>>({
+    'Alex Rivera': [
+      { from: 'Alex Rivera', text: 'Hey, starting the party in 5 — join?', unread: true }
+    ],
+    'Jamie Lee': [
+      { from: 'Jamie Lee', text: "We're live now! Come watch!", unread: true }
+    ],
+    'Sarah Chen': [
+      { from: 'Sarah Chen', text: 'Loved your review — great catch on scene 3!', unread: false }
+    ]
+  });
   const [messageText, setMessageText] = useState('');
+
+  const getUnreadCount = (name: string) => (messages[name] || []).filter(m => m.unread).length;
+  const contactsList = Array.from(new Map([...followers, ...following].map(u => [u.name, u])).values());
+  contactsList.sort((a, b) => getUnreadCount(b.name) - getUnreadCount(a.name));
 
   const handleLike = (id: number) => {
     setActivities(activities.map(activity => 
@@ -346,7 +360,6 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                       />
                     </div>
                     <div className="flex justify-between items-center">
-                      <div className="text-xs text-gray-400">You can optionally add a title or connect a movie.</div>
                       <div className="flex items-center gap-2">
                         <button onClick={() => { setComposerExpanded(false); setNewPostText(''); setComposerTitle(''); setComposerMovie(''); }} className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg">Cancel</button>
                         <button onClick={() => { createPost(); setComposerExpanded(false); setComposerTitle(''); setComposerMovie(''); }} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Post</button>
@@ -481,13 +494,16 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                     <button className="text-sm text-gray-400">New</button>
                   </div>
                   <div className="space-y-2 overflow-y-auto max-h-[60vh]">
-                    {Array.from(new Map([...followers, ...following].map(u => [u.name, u])).values()).map((u) => (
-                      <div key={u.name} onClick={() => setSelectedDM(u)} className={`flex items-center gap-3 p-2 rounded-md hover:bg-zinc-700 cursor-pointer ${selectedDM?.name === u.name ? 'bg-zinc-700' : ''}`}>
+                    {contactsList.map((u) => (
+                      <div key={u.name} onClick={() => { setSelectedDM(u); setMessages(prev => ({ ...prev, [u.name]: (prev[u.name] || []).map(m => ({ ...m, unread: false })) })); }} className={`flex items-center gap-3 p-2 rounded-md hover:bg-zinc-700 cursor-pointer ${selectedDM?.name === u.name ? 'bg-zinc-700' : ''}`}>
                         <img src={u.avatar} alt={u.name} className="w-10 h-10 rounded-full object-cover" />
                         <div className="flex-1">
                           <div className="font-semibold">{u.name}</div>
                           <div className="text-xs text-gray-400">{u.isFollowing ? 'Following' : 'Not following'}</div>
                         </div>
+                        {getUnreadCount(u.name) > 0 && (
+                          <div className="ml-2 bg-red-600 text-white text-xs px-2 py-0.5 rounded-full">{getUnreadCount(u.name)}</div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -513,7 +529,13 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                         ))}
                       </div>
                       <div className="flex items-center gap-2">
-                        <input value={messageText} onChange={(e) => setMessageText(e.target.value)} placeholder={`Message ${selectedDM.name}`} className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none" />
+                        <input
+                          value={messageText}
+                          onChange={(e) => setMessageText(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); if (selectedDM) sendMessage(selectedDM); } }}
+                          placeholder={`Message ${selectedDM.name}`}
+                          className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none"
+                        />
                         <button onClick={() => sendMessage(selectedDM)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
                           <Send className="w-4 h-4" />
                         </button>
