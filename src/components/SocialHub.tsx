@@ -176,10 +176,10 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
   const [selectedDM, setSelectedDM] = useState<Activity['user'] | null>(null);
   const [messages, setMessages] = useState<Record<string, { from: string; text: string; unread?: boolean }[]>>({
     'Alex Rivera': [
-      { from: 'Alex Rivera', text: 'Hey, starting the party in 5 — join?', unread: true }
+      { from: 'Alex Rivera', text: 'Hey, what you think about Batman?', unread: true }
     ],
     'Jamie Lee': [
-      { from: 'Jamie Lee', text: "We're live now! Come watch!", unread: true }
+      { from: 'Jamie Lee', text: "What's up man", unread: true }
     ],
     'Sarah Chen': [
       { from: 'Sarah Chen', text: 'Loved your review — great catch on scene 3!', unread: false }
@@ -275,7 +275,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
             onClick={() => setActiveTab('feed')}
             className={`flex-1 px-6 py-4 font-semibold transition ${
               activeTab === 'feed'
-                ? 'bg-zinc-800 text-white border-b-2 border-blue-500'
+                ? 'bg-zinc-800 text-white border-b-2 border-red-600'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -288,7 +288,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
             onClick={() => setActiveTab('messages')}
             className={`flex-1 px-6 py-4 font-semibold transition ${
               activeTab === 'messages'
-                ? 'bg-zinc-800 text-white border-b-2 border-blue-500'
+                ? 'bg-zinc-800 text-white border-b-2 border-red-600'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -302,7 +302,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
             onClick={() => setActiveTab('profile')}
             className={`flex-1 px-6 py-4 font-semibold transition ${
               activeTab === 'profile'
-                ? 'bg-zinc-800 text-white border-b-2 border-blue-500'
+                ? 'bg-zinc-800 text-white border-b-2 border-red-600'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -328,7 +328,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                       placeholder="What's on your mind?"
                       className="flex-1 bg-zinc-900 border border-zinc-700 rounded-full px-4 py-2 text-sm outline-none"
                     />
-                    <button onClick={() => setComposerExpanded(true)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-full">Start Post</button>
+                    <button onClick={() => setComposerExpanded(true)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-full">Start Post</button>
                   </div>
                 ) : (
                   <div>
@@ -362,7 +362,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <button onClick={() => { setComposerExpanded(false); setNewPostText(''); setComposerTitle(''); setComposerMovie(''); }} className="bg-zinc-700 hover:bg-zinc-600 text-white px-3 py-2 rounded-lg">Cancel</button>
-                        <button onClick={() => { createPost(); setComposerExpanded(false); setComposerTitle(''); setComposerMovie(''); }} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">Post</button>
+                        <button onClick={() => { createPost(); setComposerExpanded(false); setComposerTitle(''); setComposerMovie(''); }} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">Post</button>
                       </div>
                     </div>
                   </div>
@@ -409,7 +409,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                   <h3 className="text-xl font-bold mb-1">Your Name</h3>
                   <p className="text-gray-300">Short bio or status goes here. Customize in the profile tab.</p>
                   <div className="mt-4 flex items-center gap-3">
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition font-semibold">Edit Profile</button>
+                    <button className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-semibold">Edit Profile</button>
                     <button className="bg-zinc-700 hover:bg-zinc-600 text-white px-4 py-2 rounded-lg transition">Settings</button>
                   </div>
                       <div className="mt-4 flex items-center gap-4">
@@ -489,9 +489,8 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {/* Contacts list */}
                 <div className="md:col-span-1 bg-zinc-800 rounded-lg p-4 border border-zinc-700">
-                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center justify-between mb-3">
                     <h3 className="text-lg font-bold">Messages</h3>
-                    <button className="text-sm text-gray-400">New</button>
                   </div>
                   <div className="space-y-2 overflow-y-auto max-h-[60vh]">
                     {contactsList.map((u) => (
@@ -522,7 +521,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                       </div>
                       <div className="flex-1 overflow-y-auto space-y-3 mb-4">
                         {(messages[selectedDM.name] || []).map((m, i) => (
-                          <div key={i} className={`p-3 rounded-md ${m.from === 'You' ? 'bg-blue-600 text-white self-end' : 'bg-zinc-700 text-gray-200'}`}>
+                          <div key={i} className={`p-3 rounded-md ${m.from === 'You' ? 'bg-red-700 text-white self-end' : 'bg-zinc-700 text-gray-200'}`}>
                             <div className="text-sm">{m.text}</div>
                             <div className="text-xs text-gray-400 mt-1">{m.from}</div>
                           </div>
@@ -536,7 +535,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                           placeholder={`Message ${selectedDM.name}`}
                           className="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-3 py-2 text-sm outline-none"
                         />
-                        <button onClick={() => sendMessage(selectedDM)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        <button onClick={() => sendMessage(selectedDM)} className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
                           <Send className="w-4 h-4" />
                         </button>
                       </div>
@@ -691,7 +690,8 @@ function ActivityCard({ activity, onLike, onFollow, comments, onSubmitComment }:
 
 function WatchPartyCard({ party }: { party: WatchParty }) {
   return (
-    <div className="bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-blue-600 transition">
+    <div className="bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-red-600 transition">
+      <div className="bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700 hover:border-red-600 transition">
       <div className="relative">
         <img
           src={party.movieImage}
@@ -724,9 +724,10 @@ function WatchPartyCard({ party }: { party: WatchParty }) {
             {party.participants}/{party.maxParticipants} joined
           </div>
         </div>
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition font-semibold">
+        <button className="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition font-semibold">
           {party.isLive ? 'Join Now' : 'Reserve Spot'}
         </button>
+      </div>
       </div>
     </div>
   );
