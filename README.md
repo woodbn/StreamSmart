@@ -2,7 +2,7 @@
 
 ## Overview
 
-StreamSmart is a Netflix-inspired movie streaming web application designed to improve content discovery through AI recommendations, social interaction, and viewing analytics.
+StreamSmart is a movie streaming web application inspired by Netflix designed to improve content discovery through AI recommendations, social interaction, and viewing analytics.
 
 This project was developed for a Human-Computer Interaction course and demonstrates how modern UI design and AI integration can enhance the streaming user experience.
 
