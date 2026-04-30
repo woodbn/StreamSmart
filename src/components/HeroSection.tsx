@@ -33,8 +33,7 @@ export function HeroSection({ onAskAI, onViewReviews, onPlay }: HeroSectionProps
         </div>
         <h2 className="text-5xl md:text-6xl font-bold mb-4">Avengers</h2>
         <p className="text-lg mb-6 text-gray-200">
-          A brilliant team of scientists must pull off the impossible: steal a technology
-          that could reshape reality itself before it falls into the wrong hands.
+          A premier team of superheroes in the Marvel Cinematic Universe (MCU) and Marvel Comics, known as "Earth's Mightiest Heroes"
         </p>
         <div className="flex gap-4 flex-wrap">
           <button
