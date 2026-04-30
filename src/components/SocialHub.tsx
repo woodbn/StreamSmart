@@ -9,7 +9,7 @@
 */
 
 import { useEffect, useState } from 'react';
-import { X, Users, User, Heart, MessageCircle, Share2, TrendingUp, Award, Zap, Eye, UserPlus, ChevronDown, Send } from 'lucide-react';
+import { X, Users, User, Heart, MessageCircle, Share2, TrendingUp, Award, ChevronDown, Send } from 'lucide-react';
 
 interface SocialHubProps {
   isOpen: boolean;
@@ -247,7 +247,6 @@ export function SocialHub({ isOpen, onClose, prefillMovie }: SocialHubProps) {
       isLiked: false
     };
     if (composerRating && composerRating > 0) {
-      // @ts-ignore allow optional rating
       p.rating = composerRating;
     }
     setActivities([p, ...activities]);

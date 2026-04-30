@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Award,
   Target,
-  Zap,
   Heart,
   Film,
   Tv,
