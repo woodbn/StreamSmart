@@ -23,11 +23,10 @@ interface AnalyticsDashboardProps {
 type TimeRange = 'week' | 'month' | 'year';
 
 /**
- * Mock analytics dataset used by the dashboard.
+ *Analytics dataset used by the dashboard.
  *
  * The selected time range controls which values are displayed.
- * This makes the Week / Month / Year buttons update the actual
- * dashboard content instead of only changing button styling.
+ *  Week / Month / Year buttons
  */
 const analyticsData = {
   week: {
@@ -494,7 +493,7 @@ function MetricCard({
 }
 
 /**
- * Displays Netflix-style user behavior metrics such as
+ * Displays user behavior metrics such as
  * top genre, average rating, completion rate, and watchlist progress.
  */
 function NetflixMetricCard({
