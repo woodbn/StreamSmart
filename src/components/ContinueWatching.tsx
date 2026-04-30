@@ -3,7 +3,7 @@ import { Play, Clock } from 'lucide-react';
 const continueWatchingData = [
   {
     id: 1,
-    title: 'The Quantum Heist',
+    title: 'Avengers',
     progress: 65,
     timeLeft: '42 min left',
     image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=400&h=225&fit=crop'
@@ -17,14 +17,18 @@ const continueWatchingData = [
   },
   {
     id: 3,
-    title: 'Love in Paris',
+    title: 'Whiplash',
     progress: 89,
     timeLeft: '8 min left',
     image: 'https://images.unsplash.com/photo-1545893835-abaa50cbe628?w=400&h=225&fit=crop'
   }
 ];
 
-export function ContinueWatching() {
+interface ContinueWatchingProps {
+  onWatchMovie: (movie: { title: string; image: string }) => void;
+}
+
+export function ContinueWatching({ onWatchMovie }: ContinueWatchingProps) {
   return (
     <div className="px-8 -mt-32 relative z-20 mb-12">
       <div className="flex items-center justify-between mb-4">
@@ -35,6 +39,7 @@ export function ContinueWatching() {
         {continueWatchingData.map((item) => (
           <div
             key={item.id}
+            onClick={() => onWatchMovie(item)}
             className="relative group cursor-pointer overflow-hidden rounded-lg"
           >
             <img

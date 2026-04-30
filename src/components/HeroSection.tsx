@@ -3,9 +3,10 @@ import { Play, Info, Sparkles, Star } from 'lucide-react';
 interface HeroSectionProps {
   onAskAI: () => void;
   onViewReviews: () => void;
+  onPlay: () => void;
 }
 
-export function HeroSection({ onAskAI, onViewReviews }: HeroSectionProps) {
+export function HeroSection({ onAskAI, onViewReviews, onPlay }: HeroSectionProps) {
   return (
     <div className="relative h-[80vh] flex items-center">
       <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent z-10" />
@@ -30,13 +31,16 @@ export function HeroSection({ onAskAI, onViewReviews }: HeroSectionProps) {
             </button>
           </div>
         </div>
-        <h2 className="text-5xl md:text-6xl font-bold mb-4">The Quantum Heist</h2>
+        <h2 className="text-5xl md:text-6xl font-bold mb-4">Avengers</h2>
         <p className="text-lg mb-6 text-gray-200">
           A brilliant team of scientists must pull off the impossible: steal a technology
           that could reshape reality itself before it falls into the wrong hands.
         </p>
         <div className="flex gap-4 flex-wrap">
-          <button className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded hover:bg-gray-200 transition font-semibold">
+          <button
+            onClick={onPlay}
+            className="flex items-center gap-2 bg-white text-black px-8 py-3 rounded hover:bg-gray-200 transition font-semibold"
+          >
             <Play className="w-5 h-5" fill="currentColor" />
             Play
           </button>

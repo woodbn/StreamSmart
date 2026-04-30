@@ -39,9 +39,10 @@ const categories = [
 interface MovieGridProps {
   filters: string[];
   onMovieSelect: (movieTitle?: string) => void;
+  onWatchMovie: (movie: { title: string; image: string }) => void;
 }
 
-export function MovieGrid({ filters, onMovieSelect }: MovieGridProps) {
+export function MovieGrid({ filters, onMovieSelect, onWatchMovie }: MovieGridProps) {
   const filteredCategories = categories.map(category => {
     if (filters.length === 0 || filters.includes('surprise')) {
       return category;
@@ -65,6 +66,7 @@ export function MovieGrid({ filters, onMovieSelect }: MovieGridProps) {
           title={category.title} 
           movies={category.movies}
           onMovieSelect={onMovieSelect}
+          onWatchMovie={onWatchMovie}
         />
       ))}
     </div>

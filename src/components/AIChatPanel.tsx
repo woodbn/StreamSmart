@@ -184,15 +184,15 @@ export function AIChatPanel({ isOpen, onClose }: AIChatPanelProps) {
   //       { type: 'add', label: 'Add Interstellar', movieTitle: 'Interstellar' }
   //     ];
   //   } else if (lowerText.includes('trending') || lowerText.includes('popular')) {
-  //     responseText = "This week's top trending picks: 'The Quantum Heist' (featured on our homepage), 'Night Shadows' - a thriller with 95% rating, and 'Love in Paris' - a romantic drama.";
-  //     suggestions = ["Tell me about Night Shadows", "What's Love in Paris about?", "Show me action movies"];
+  //     responseText = "This week's top trending picks: 'Avengers' (featured on our homepage), 'Night Shadows' - a thriller with 95% rating, and 'Whiplash' - a romantic drama.";
+  //     suggestions = ["Tell me about Night Shadows", "What's Whiplash about?", "Show me action movies"];
   //     quickActions = [
-  //       { type: 'play', label: 'Play The Quantum Heist', movieTitle: 'The Quantum Heist' },
+  //       { type: 'play', label: 'Play Avengers', movieTitle: 'Avengers' },
   //       { type: 'remind', label: 'Remind me later', movieTitle: 'Night Shadows' }
   //     ];
   //   } else if (lowerText.includes('review') || lowerText.includes('rating')) {
-  //     responseText = "I can help you find highly-rated content! 'The Quantum Heist' has an 8.9 rating with 2.4k reviews. Users love the visual effects and plot twists. Want to see what people are saying or find similar highly-rated movies?";
-  //     suggestions = ["Show me top-rated movies", "Read reviews for The Quantum Heist", "What are critics saying?"];
+  //     responseText = "I can help you find highly-rated content! 'Avengers' has an 8.9 rating with 2.4k reviews. Users love the visual effects and plot twists. Want to see what people are saying or find similar highly-rated movies?";
+  //     suggestions = ["Show me top-rated movies", "Read reviews for Avengers", "What are critics saying?"];
   //   } else if (lowerText.includes('diary') || lowerText.includes('journal')) {
   //     responseText = "Your Movie Diary is a great way to track your viewing journey! You've logged 15 movies this month. I notice you really enjoy sci-fi thrillers. Want to add an entry for something you just watched or see personalized insights?";
   //     suggestions = ["Open my diary", "Show my viewing patterns", "What should I watch next based on my diary?"];

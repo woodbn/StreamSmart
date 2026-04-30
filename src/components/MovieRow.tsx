@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Plus, Play, Info, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Play, Star } from 'lucide-react';
 import { useRef, useState } from 'react';
 
 interface Movie {
@@ -13,9 +13,10 @@ interface MovieRowProps {
   title: string;
   movies: Movie[];
   onMovieSelect: (movieTitle: string) => void;
+  onWatchMovie: (movie: Movie) => void;
 }
 
-export function MovieRow({ title, movies, onMovieSelect }: MovieRowProps) {
+export function MovieRow({ title, movies, onMovieSelect, onWatchMovie }: MovieRowProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [hoveredMovie, setHoveredMovie] = useState<number | null>(null);
 
@@ -72,7 +73,10 @@ export function MovieRow({ title, movies, onMovieSelect }: MovieRowProps) {
                   </div>
                   <h4 className="font-semibold mb-3 text-sm">{movie.title}</h4>
                   <div className="flex gap-2">
-                    <button className="flex-1 bg-white text-black rounded px-2 py-1.5 flex items-center justify-center gap-1 hover:bg-gray-200 transition text-xs">
+                    <button
+                      onClick={() => onWatchMovie(movie)}
+                      className="flex-1 bg-white text-black rounded px-2 py-1.5 flex items-center justify-center gap-1 hover:bg-gray-200 transition text-xs"
+                    >
                       <Play className="w-3 h-3" fill="currentColor" />
                       Play
                     </button>

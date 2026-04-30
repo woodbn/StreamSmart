@@ -11,6 +11,7 @@ import { ReviewsPanel } from './components/ReviewsPanel';
 import { AchievementsPanel } from './components/AchievementsPanel';
 import { SocialHub } from './components/SocialHub';
 import { AnalyticsDashboard } from './components/AnalyticsDashboard';
+import { type WatchMovie, WatchPage } from './components/WatchPage';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,7 +21,9 @@ export default function App() {
   const [achievementsOpen, setAchievementsOpen] = useState(false);
   const [socialHubOpen, setSocialHubOpen] = useState(false);
   const [analyticsOpen, setAnalyticsOpen] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState('The Quantum Heist');
+  const [selectedMovie, setSelectedMovie] = useState('Avengers');
+  const [watchMovie, setWatchMovie] = useState<WatchMovie | null>(null);
+  const [socialPostMovie, setSocialPostMovie] = useState<WatchMovie | null>(null);
 
   const handleMovieSelect = (movieTitle?: string) => {
     if (movieTitle) {
@@ -29,15 +32,41 @@ export default function App() {
     setReviewsPanelOpen(true);
   };
 
+  const handleWatchMovie = (movie: WatchMovie) => {
+    setIsChatOpen(false);
+    setReviewsPanelOpen(false);
+    setAchievementsOpen(false);
+    setSocialHubOpen(false);
+    setAnalyticsOpen(false);
+    setWatchMovie(movie);
+  };
+
   if (!isLoggedIn) {
     return <LoginPage onLogin={() => setIsLoggedIn(true)} />;
+  }
+
+  if (watchMovie) {
+    return (
+      <WatchPage
+        movie={watchMovie}
+        onBack={() => setWatchMovie(null)}
+        onPostAboutMovie={(movie) => {
+          setSocialPostMovie(movie);
+          setWatchMovie(null);
+          setSocialHubOpen(true);
+        }}
+      />
+    );
   }
 
   return (
     <div className="min-h-screen bg-black text-white">
       <Header 
         onOpenAchievements={() => setAchievementsOpen(true)}
-        onOpenSocial={() => setSocialHubOpen(true)}
+        onOpenSocial={() => {
+          setSocialPostMovie(null);
+          setSocialHubOpen(true);
+        }}
         onOpenAnalytics={() => setAnalyticsOpen(true)}
         onLogout={() => {
           setIsChatOpen(false);
@@ -51,11 +80,15 @@ export default function App() {
       
       <HeroSection 
         onAskAI={() => setIsChatOpen(true)} 
-        onViewReviews={() => handleMovieSelect('The Quantum Heist')} 
+        onViewReviews={() => handleMovieSelect('Avengers')} 
+        onPlay={() => handleWatchMovie({
+          title: 'Avengers',
+          image: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&h=1080&fit=crop'
+        })}
       />
       
       <main className="relative">
-        <ContinueWatching />
+        <ContinueWatching onWatchMovie={handleWatchMovie} />
         
         <SmartFilters 
           activeFilters={activeFilters} 
@@ -65,6 +98,7 @@ export default function App() {
         <MovieGrid 
           filters={activeFilters} 
           onMovieSelect={handleMovieSelect} 
+          onWatchMovie={handleWatchMovie}
         />
       </main>
 
@@ -101,7 +135,11 @@ export default function App() {
       
       <SocialHub 
         isOpen={socialHubOpen}
-        onClose={() => setSocialHubOpen(false)}
+        onClose={() => {
+          setSocialHubOpen(false);
+          setSocialPostMovie(null);
+        }}
+        prefillMovie={socialPostMovie}
       />
       
       <AnalyticsDashboard 

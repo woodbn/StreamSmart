@@ -8,12 +8,16 @@
   - Presentation: uses Tailwind utility classes and `lucide-react` icons.
 */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, Users, User, Heart, MessageCircle, Share2, TrendingUp, Award, Zap, Eye, UserPlus, ChevronDown, Send } from 'lucide-react';
 
 interface SocialHubProps {
   isOpen: boolean;
   onClose: () => void;
+  prefillMovie?: {
+    title: string;
+    image: string;
+  } | null;
 }
 
 interface Activity {
@@ -51,7 +55,7 @@ const mockActivities: Activity[] = [
       isFollowing: true
     },
     type: 'watched',
-    movieTitle: "The Quantum Heist",
+    movieTitle: "Avengers",
     movieImage: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300&h=450&fit=crop",
     rating: 5,
     comment: "Mind-blowing! The ending completely caught me off guard. Anyone else notice the quantum equation on the whiteboard in scene 3?",
@@ -117,7 +121,7 @@ const profileAvatar = "https://images.unsplash.com/photo-1494790108377-be9c29b29
   - Renders header, tab bar, and tab-specific content (feed, messages, profile).
 */
 
-export function SocialHub({ isOpen, onClose }: SocialHubProps) {
+export function SocialHub({ isOpen, onClose, prefillMovie }: SocialHubProps) {
   const [activeTab, setActiveTab] = useState<'feed' | 'messages' | 'profile'>('feed');
   const [activities, setActivities] = useState(mockActivities);
   const [newPostText, setNewPostText] = useState('');
@@ -127,7 +131,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
   const [composerRating, setComposerRating] = useState<number | null>(null);
   const [showMoviePicker, setShowMoviePicker] = useState(false);
   const mockMovieOptions = [
-    'The Quantum Heist',
+    'Avengers',
     'Horror Night Marathon',
     'Ultimate Sci-Fi Collection'
   ];
@@ -151,6 +155,16 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
     ]
   });
   const [messageText, setMessageText] = useState('');
+
+  useEffect(() => {
+    if (!isOpen || !prefillMovie) return;
+
+    setActiveTab('feed');
+    setComposerExpanded(true);
+    setComposerTitle(prefillMovie.title);
+    setComposerMovie(prefillMovie.title);
+    setNewPostText(`Just finished watching ${prefillMovie.title}. `);
+  }, [isOpen, prefillMovie]);
 
   const getUnreadCount = (name: string) => (messages[name] || []).filter(m => m.unread).length;
   const contactsList = Array.from(new Map([...followers, ...following].map(u => [u.name, u])).values());
@@ -224,8 +238,8 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
       id: Date.now(),
       user: { name: 'You', avatar: profileAvatar, isFollowing: false },
       type: 'diary',
-      movieTitle: composerTitle || 'Post',
-      movieImage: composerMovie ? 'https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=300&h=450&fit=crop' : '',
+      movieTitle: composerMovie || composerTitle || 'Post',
+      movieImage: prefillMovie?.title === composerMovie ? prefillMovie.image : composerMovie ? 'https://images.unsplash.com/photo-1524985069026-dd778a71c7b4?w=300&h=450&fit=crop' : '',
       comment: newPostText.trim(),
       timestamp: 'Just now',
       likes: 0,
@@ -365,7 +379,7 @@ export function SocialHub({ isOpen, onClose }: SocialHubProps) {
                 {showMoviePicker && (
                   <div className="mt-2 bg-zinc-900 border border-zinc-700 rounded p-3">
                     <div className="flex items-center justify-between mb-2">
-                      <div className="font-semibold">Select a movie (mock)</div>
+                      <div className="font-semibold">Select a movie</div>
                       <button onClick={() => setShowMoviePicker(false)} className="text-sm text-gray-400">Close</button>
                     </div>
                     <div className="grid grid-cols-1 gap-2">
